@@ -1,0 +1,6 @@
+How to Build and Run:
+
+1. Install Python 3.x on your system
+2. No additional dependencies required
+3. Run using the terminal:
+   python interpreter.py demo_program.txt
