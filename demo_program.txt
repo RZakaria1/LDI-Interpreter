@@ -1,5 +1,13 @@
-"hello" + " " + "world"
-"foo" + "bar" == "foobar"
-"10 corgis" != "10" + "corgis"
-"age: " + 25
-"true" == true
+rashid = "Rashid is learning LDI"
+print rashid
+
+x = 10
+x = x + 5
+print x
+
+text = "hello "
+text = text + "world"
+print text
+
+truth = true
+print truth
