@@ -2,13 +2,19 @@ import sys
 
 # Token types
 (
-    NUMBER, BOOL, PLUS, MINUS, STAR, SLASH, 
-    LPAREN, RPAREN, EQEQ, NEQ, LT, GT, LTE, GTE,
-    AND, OR, NOT, EOF
+    NUMBER, BOOL, STRING,
+    PLUS, MINUS, STAR, SLASH,
+    LPAREN, RPAREN,
+    EQEQ, NEQ, LT, GT, LTE, GTE,
+    AND, OR, NOT,
+    EOF
 ) = (
-    'NUMBER', 'BOOL', 'PLUS', 'MINUS', 'STAR', 'SLASH',
-    'LPAREN', 'RPAREN', 'EQEQ', 'NEQ', 'LT', 'GT', 'LTE', 'GTE',
-    'AND', 'OR', 'NOT', 'EOF'
+    'NUMBER', 'BOOL', 'STRING',
+    'PLUS', 'MINUS', 'STAR', 'SLASH',
+    'LPAREN', 'RPAREN',
+    'EQEQ', 'NEQ', 'LT', 'GT', 'LTE', 'GTE',
+    'AND', 'OR', 'NOT',
+    'EOF'
 )
 
 class Token:
@@ -36,20 +42,30 @@ class Lexer:
     def match(self, string):
         return self.text[self.pos:self.pos + len(string)] == string
 
+    def string(self):
+        result = ''
+        self.advance()  # Skip opening "
+        while self.current_char and self.current_char != '"':
+            result += self.current_char
+            self.advance()
+        self.advance()  # Skip closing "
+        return Token(STRING, result)
+
     def identifier(self):
         result = ''
         while self.current_char and (self.current_char.isalpha() or self.current_char.isdigit()):
             result += self.current_char
             self.advance()
-        if result.lower() == 'true':
+        result = result.lower()
+        if result == 'true':
             return Token(BOOL, True)
-        elif result.lower() == 'false':
+        elif result == 'false':
             return Token(BOOL, False)
-        elif result.lower() == 'and':
+        elif result == 'and':
             return Token(AND)
-        elif result.lower() == 'or':
+        elif result == 'or':
             return Token(OR)
-        elif result.lower() == 'not':
+        elif result == 'not':
             return Token(NOT)
         else:
             raise Exception(f'Unknown identifier: {result}')
@@ -66,25 +82,20 @@ class Lexer:
             if self.current_char.isspace():
                 self.skip_whitespace()
                 continue
-
+            if self.current_char == '"':
+                return self.string()
             if self.current_char.isdigit():
                 return self.number()
             if self.current_char.isalpha():
                 return self.identifier()
-
             if self.match('=='):
-                self.advance(); self.advance()
-                return Token(EQEQ)
+                self.advance(); self.advance(); return Token(EQEQ)
             if self.match('!='):
-                self.advance(); self.advance()
-                return Token(NEQ)
+                self.advance(); self.advance(); return Token(NEQ)
             if self.match('<='):
-                self.advance(); self.advance()
-                return Token(LTE)
+                self.advance(); self.advance(); return Token(LTE)
             if self.match('>='):
-                self.advance(); self.advance()
-                return Token(GTE)
-
+                self.advance(); self.advance(); return Token(GTE)
             if self.current_char == '+':
                 self.advance(); return Token(PLUS)
             if self.current_char == '-':
@@ -101,26 +112,38 @@ class Lexer:
                 self.advance(); return Token(LT)
             if self.current_char == '>':
                 self.advance(); return Token(GT)
-
             raise Exception(f'Invalid character: {self.current_char}')
         return Token(EOF)
 
 # AST nodes
 class Num:
-    def __init__(self, token): self.value = token.value
+    def __init__(self, token):
+        self.value = token.value
 
 class Bool:
-    def __init__(self, token): self.value = token.value
+    def __init__(self, token):
+        self.value = token.value
+
+class Str:
+    def __init__(self, token):
+        self.value = token.value
 
 class BinOp:
-    def __init__(self, left, op, right): self.left = left; self.op = op; self.right = right
+    def __init__(self, left, op, right):
+        self.left = left
+        self.op = op
+        self.right = right
 
 class UnaryOp:
-    def __init__(self, op, expr): self.op = op; self.expr = expr
+    def __init__(self, op, expr):
+        self.op = op
+        self.expr = expr
 
 # Parser
 class Parser:
-    def __init__(self, lexer): self.lexer = lexer; self.current_token = lexer.get_next_token()
+    def __init__(self, lexer):
+        self.lexer = lexer
+        self.current_token = lexer.get_next_token()
 
     def eat(self, token_type):
         if self.current_token.type == token_type:
@@ -131,13 +154,20 @@ class Parser:
     def factor(self):
         token = self.current_token
         if token.type == NUMBER:
-            self.eat(NUMBER); return Num(token)
+            self.eat(NUMBER)
+            return Num(token)
         elif token.type == BOOL:
-            self.eat(BOOL); return Bool(token)
+            self.eat(BOOL)
+            return Bool(token)
+        elif token.type == STRING:
+            self.eat(STRING)
+            return Str(token)
         elif token.type == MINUS:
-            self.eat(MINUS); return UnaryOp(token, self.factor())
+            self.eat(MINUS)
+            return UnaryOp(token, self.factor())
         elif token.type == NOT:
-            self.eat(NOT); return UnaryOp(token, self.factor())
+            self.eat(NOT)
+            return UnaryOp(token, self.factor())
         elif token.type == LPAREN:
             self.eat(LPAREN)
             node = self.expr()
@@ -183,35 +213,56 @@ class Parser:
 # Interpreter
 class Interpreter:
     def visit(self, node):
-        if isinstance(node, Num): return node.value
-        elif isinstance(node, Bool): return node.value
-        elif isinstance(node, UnaryOp):
+        if isinstance(node, Num):
+            return node.value
+        if isinstance(node, Bool):
+            return node.value
+        if isinstance(node, Str):
+            return node.value
+        if isinstance(node, UnaryOp):
             val = self.visit(node.expr)
-            if node.op.type == MINUS: return -val
-            if node.op.type == NOT: return not val
-        elif isinstance(node, BinOp):
+            if node.op.type == MINUS:
+                return -val
+            if node.op.type == NOT:
+                return not val
+        if isinstance(node, BinOp):
             left = self.visit(node.left)
             right = self.visit(node.right)
-            if node.op.type == PLUS: return left + right
-            if node.op.type == MINUS: return left - right
-            if node.op.type == STAR: return left * right
-            if node.op.type == SLASH: return left / right
-            if node.op.type == EQEQ: return left == right
-            if node.op.type == NEQ: return left != right
-            if node.op.type == LT: return left < right
-            if node.op.type == GT: return left > right
-            if node.op.type == LTE: return left <= right
-            if node.op.type == GTE: return left >= right
-            if node.op.type == AND: return left and right
-            if node.op.type == OR: return left or right
+            if node.op.type == PLUS:
+                if isinstance(left, str) or isinstance(right, str):
+                    return str(left) + str(right)
+                return left + right
+            if node.op.type == MINUS:
+                return left - right
+            if node.op.type == STAR:
+                return left * right
+            if node.op.type == SLASH:
+                return left / right
+            if node.op.type == EQEQ:
+                return left == right
+            if node.op.type == NEQ:
+                return left != right
+            if node.op.type == LT:
+                return left < right
+            if node.op.type == GT:
+                return left > right
+            if node.op.type == LTE:
+                return left <= right
+            if node.op.type == GTE:
+                return left >= right
+            if node.op.type == AND:
+                return left and right
+            if node.op.type == OR:
+                return left or right
         raise Exception(f'Unknown node: {node}')
 
-# Run file
+# Runner
 def main(filename):
     with open(filename) as f:
         lines = f.readlines()
         for line in lines:
-            if not line.strip(): continue
+            if not line.strip():
+                continue
             lexer = Lexer(line)
             parser = Parser(lexer)
             tree = parser.expr()

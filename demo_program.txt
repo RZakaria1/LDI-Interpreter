@@ -1,8 +1,5 @@
-true == false
-true != true
-5 > 3
-not (2 + 2 == 5)
-true and false
-false or true
-(5 < 10) and (2 != 3)
-(3 > 1) or (false and false)
+"hello" + " " + "world"
+"foo" + "bar" == "foobar"
+"10 corgis" != "10" + "corgis"
+"age: " + 25
+"true" == true
