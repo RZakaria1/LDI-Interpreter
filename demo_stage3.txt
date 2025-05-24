@@ -1,0 +1,5 @@
+print "hello" + " " + "world"
+print "foo" + "bar" == "foobar"
+print "10 corgis" != "10" + "corgis"
+print "age: " + 25
+print "true" == true
