@@ -1,6 +1,14 @@
-How to Build and Run:
+BUILD INSTRUCTIONS - Custom Language Interpreter
 
-1. Install Python 3.x on your system
-2. No additional dependencies required
-3. Run using the terminal:
-   python interpreter.py demo_program.txt
+Language: Python 3
+
+Dependencies:
+- None (uses standard library only)
+
+How to Run:
+1. Open terminal or command prompt.
+2. Navigate to the folder containing Interpreter.py.
+3. Run the interpreter with a source file:
+   python Interpreter.py demo_stage4.txt
+
+Each line in the input file should contain a valid expression or statement. Blank lines are ignored.
