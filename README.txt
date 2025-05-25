@@ -26,7 +26,7 @@ This interpreter was built in Python and implements a simple, dynamically typed 
     x = x + 2
     print x
 
-❌ Stage 5 (if, while, input) is not implemented.
+Stage 5 (if, while, input) is not implemented.
 
 Files:
 - Interpreter.py → main source code
@@ -35,5 +35,5 @@ Files:
 - demo_stage3.txt → string handling examples
 - demo_stage4.txt → variable and print examples
 
-To run:
-python Interpreter.py demo_stage4.txt
+To run
+-python Interpreter.py demo_stage4.txt, -python Interpreter.py demo_stage3.txt, python Interpreter.py demo_stage2.txt, python Interpreter.py demo_stage1.txt
