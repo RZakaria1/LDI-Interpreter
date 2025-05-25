@@ -1,0 +1,60 @@
+a = 10 + 5
+print a
+
+b = (20 - 3) * 2
+print b
+
+c = 8.5 / (2 * 4)
+print c
+
+d = -3 + 7
+print d
+
+isTrue = true == false
+print isTrue
+
+isDiff = true != true
+print isDiff
+
+compare = 5 > 3
+print compare
+
+logic = not (2 + 2 == 5)
+print logic
+
+logic2 = true and false
+print logic2
+
+logic3 = false or true
+print logic3
+
+mixed = (5 < 10) and (2 != 3)
+print mixed
+
+combine = "hello" + " " + "world"
+print combine
+
+match = "foo" + "bar" == "foobar"
+print match
+
+notMatch = "10 corgis" != "10" + "corgis"
+print notMatch
+
+mixedString = "age: " + 25
+print mixedString
+
+globalVar = 9 + 10
+globalVar = globalVar + 2
+print globalVar
+
+floatVal = 1.0
+floatVal = floatVal + 5
+print floatVal
+
+textCat = "10 corgis"
+textCat = textCat + 5 + " more corgis"
+print textCat
+
+errorCase = 5
+errorCase = errorCase + " insert string here"
+print errorCase

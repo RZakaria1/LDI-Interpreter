@@ -1,14 +1,26 @@
-BUILD INSTRUCTIONS - Custom Language Interpreter
+BUILD — How to Build and Run the Interpreter
 
-Language: Python 3
+Requirements:
+-------------
+- Python 3.x installed on the system.
+- No additional libraries are needed.
 
-Dependencies:
-- None (uses standard library only)
+Build Instructions:
+-------------------
+There is no formal build process as this is a Python script.
 
-How to Run:
-1. Open terminal or command prompt.
-2. Navigate to the folder containing Interpreter.py.
-3. Run the interpreter with a source file:
-   python Interpreter.py demo_stage4.txt
+To run the interpreter:
 
-Each line in the input file should contain a valid expression or statement. Blank lines are ignored.
+1. Open a terminal or command prompt.
+2. Navigate to the folder with Interpreter.py and your test input file (e.g., demo_mixed.txt).
+3. Run the following command:
+
+   python Interpreter.py demo_mixed.txt
+
+This will execute the interpreter and print the results of each statement in the input file.
+
+Notes:
+------
+- Ensure your input file contains only supported syntax from Stages 1 to 4.
+- Use one statement per line.
+- Do not use parentheses with `print` (e.g., use `print x`, not `print(x)`).
